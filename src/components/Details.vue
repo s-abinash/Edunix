@@ -47,4 +47,7 @@ export default {
 
 <style scoped>
 
+{
+  background-color: darkslateblue;
+}
 </style>

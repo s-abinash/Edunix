@@ -1,8 +1,10 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import HelloWorld from "../components/HelloWorld";
+
 import e404 from '../components/e404';
 import BookingForm from "../views/BookingForm";
+import TrainSearch from "../views/TrainSearch";
+import Login from "../views/Login";
 
 Vue.use(VueRouter)
 
@@ -10,8 +12,13 @@ Vue.use(VueRouter)
 const routes = [
     {
         path: '/',
-        name: 'Hello',
-        component: HelloWorld
+        name: 'Home',
+        component: TrainSearch
+    },
+    {
+        path: '/login',
+        name: 'Login',
+        component: Login
     },
     {
         path: '/booking',

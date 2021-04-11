@@ -5,14 +5,14 @@
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld';
+
 
 export default {
   name: 'App',
 
   components: {
     // eslint-disable-next-line vue/no-unused-components
-    HelloWorld,
+
   },
 
   data: () => ({
