@@ -2,12 +2,14 @@ const express=require('express')
 const app=express.Router()
 const con=require('../db')
 
+const verifyToken=require('../auth/verifiy')
+
 app.get('/',(req,res)=>{
     res.send("<h1>Node is Working Properly</h1>");
 });
 
 // Insert Operation
-app.post('/insertUser',async (req,res)=>{
+app.post('/insertUser', verifyToken, async (req,res)=>{
     let name=req.body.name;
     let userid=req.body.userid;
     let pass=req.body.pass;
@@ -25,7 +27,7 @@ app.post('/insertUser',async (req,res)=>{
 });
 
 // Update Operation
-app.post('/updateUser',async (req,res)=>{
+app.post('/updateUser', verifyToken, async (req,res)=>{
     let id=req.body.id;
     let name=req.body.name;
     let userid=req.body.userid;
@@ -46,7 +48,7 @@ app.post('/updateUser',async (req,res)=>{
 });
 
 // Delete Operation
-app.post('/deleteUser',async (req,res)=>{
+app.post('/deleteUser', verifyToken, async (req,res)=>{
     let id=req.body.id;
     if(typeof id!=="undefined")
         await con.query("DELETE FROM `users` WHERE id=?",id,  (err, result,fields)=> {
@@ -62,10 +64,10 @@ app.post('/deleteUser',async (req,res)=>{
 });
 
 // Select Operation
-app.post('/getUsers',async (req,res)=>{
+app.post('/getUser', verifyToken, async (req,res)=>{
     let id=req.body.id;
     if(typeof id!=="undefined")
-        await con.query("SELECT * FROM `users` WHERE id=?",id,  (err, result,fields)=> {
+        await con.query("SELECT * FROM `users` WHERE id=?",id,(err, result,fields)=> {
             let resdata={message:"", data:""}
             if(err) resdata.message=err.sqlMessage;
             else resdata.message="Fetched Successfully";
@@ -75,7 +77,7 @@ app.post('/getUsers',async (req,res)=>{
             res.end(JSON.stringify(resdata));
         });
     else
-        await con.query("SELECT * FROM `users`",userid,(err, result, fields)=> {
+        await con.query("SELECT * FROM `users`",(err, result, fields)=> {
             let resdata={message:"", data:""}
             if(err) resdata.message=err.sqlMessage;
             else resdata.message="Fetched Successfully";

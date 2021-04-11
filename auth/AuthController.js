@@ -1,42 +1,40 @@
 const express = require('express');
-const router = express.Router();
+const app = express.Router();
 const bodyParser = require('body-parser');
-router.use(bodyParser.urlencoded({ extended: false }));
-router.use(bodyParser.json());
-// var User = require('../user/User');
-
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+const con=require('../db')
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const config = require('./config');
 
-router.post('/register', function(req, res) {
 
-    let hashedPassword = bcrypt.hashSync(req.body.password, 8);
+app.post('/login',(req,res)=>{
+    // Hashing
+    // let hashedPassword = bcrypt.hashSync(req.body.pass, 8);
+    console.log(req.body)
+    let pass=req.body.pass;
+    let userid=req.body.userid;
+    let sql=[userid,pass]
 
-    User.create({
-            name : req.body.name,
-            email : req.body.email,
-            password : hashedPassword
-        },
-        function (err, user) {
-            if (err) return res.status(500).send("There was a problem registering the user.")
-            // create a token
-            let token = jwt.sign({ id: user._id }, config.secret, {
-                expiresIn: 86400 // expires in 24 hours
+    con.query("SELECT * FROM `users` WHERE userid like ? && pass like ?",sql,(err, result)=> {
+        let resdata={message:""}
+        if(err) resdata.message=err.sqlMessage;
+        if((result.length)===0){
+            res.json({
+                auth: false,
+                message: "User ID or Password Incorrect"
             });
-            res.status(200).send({ auth: true, token: token });
-        });
-});
-
-router.get('/me', function(req, res) {
-    let token = req.headers['x-access-token'];
-    if (!token) return res.status(401).send({ auth: false, message: 'No token provided.' });
-
-    jwt.verify(token, config.secret, function(err, decoded) {
-        if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
-
-        res.status(200).send(decoded);
+        }
+        else
+        {
+            let token = jwt.sign({userid: userid,pass: pass}, process.env.SECRET, {expiresIn: 86400});
+            res.json({
+                auth: true,
+                message: "Login Successful",
+                token: token
+            });
+        }
     });
 });
 
-module.exports = router;
+module.exports = app;
