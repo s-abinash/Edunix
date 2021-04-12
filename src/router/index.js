@@ -5,9 +5,9 @@ import e404 from '../components/e404';
 import BookingForm from "../views/BookingForm";
 import TrainSearch from "../views/TrainSearch";
 import Login from "../views/Login";
+import {store} from "../store/store.js";
 
 Vue.use(VueRouter)
-
 
 const routes = [
     {
@@ -35,6 +35,12 @@ const routes = [
 const router = new VueRouter({
     base:'ticket-booking',
     routes
+})
+
+router.beforeEach((to, from, next) => {
+    console.log(store.getters['login/isAuthenticated']);
+    if (to.name !== 'Login' && to.name !=='Home' && !store.getters['login/isAuthenticated']) next({ name: 'Login' })
+    else next()
 })
 
 export default router
