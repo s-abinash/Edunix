@@ -3,9 +3,11 @@ import VueRouter from 'vue-router'
 
 import e404 from '../components/e404';
 import BookingForm from "../views/BookingForm";
-import TrainSearch from "../views/TrainSearch";
+import Home from "../views/Home";
+// import TrainSearch from "../views/TrainSearch";
 import Login from "../views/Login";
-import {store} from "../store/store.js";
+import Explore from "../views/Explore";
+// import {store} from "../store/store.js";
 
 Vue.use(VueRouter)
 
@@ -13,7 +15,12 @@ const routes = [
     {
         path: '/',
         name: 'Home',
-        component: TrainSearch
+        component: Home
+    },
+    {
+        path: '/explore',
+        name: 'Explore',
+        component: Explore
     },
     {
         path: '/login',
@@ -22,7 +29,7 @@ const routes = [
     },
     {
         path: '/booking',
-        name: 'BookingForm',
+        name: 'Booking',
         component: BookingForm
     },
     {
@@ -37,10 +44,10 @@ const router = new VueRouter({
     routes
 })
 
-router.beforeEach((to, from, next) => {
-    console.log(store.getters['login/isAuthenticated']);
-    if (to.name !== 'Login' && to.name !=='Home' && !store.getters['login/isAuthenticated']) next({ name: 'Login' })
-    else next()
-})
+// router.beforeEach((to, from, next) => {
+//     console.log(store.getters['login/isAuthenticated']);
+//     if (to.name !== 'Login' && to.name !=='Home' && !store.getters['login/isAuthenticated']) next({ name: 'Login' })
+//     else next()
+// })
 
 export default router

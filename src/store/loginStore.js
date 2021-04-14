@@ -10,8 +10,8 @@ export default{
     namespaced: true,
     state:getDefaultState(),
     mutations:{
-        updateLogin(state,login) {      
-            state=login;
+        updateLogin(state,login) {
+            Object.assign(state, login)
         },
         resetStore(state)
         {
@@ -21,6 +21,9 @@ export default{
     getters: {
         isAuthenticated: state => {
             return state.auth
+        },
+        token: state => {
+            return state.token
         }
     }
 }

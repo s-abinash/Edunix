@@ -11,8 +11,8 @@
             </v-toolbar>
             <v-card-text>
 
-                <v-text-field prepend-icon="mdi-account" name="login" label="Login" type="text" :rules="[v => !!v || 'User ID is Required']"></v-text-field>
-                <v-text-field id="password" prepend-icon="mdi-lock" name="password" label="Password" type="password" :rules="[v => !!v || 'Password is Required']"></v-text-field>
+                <v-text-field v-model="userid" prepend-icon="mdi-account" name="login" label="Login" type="text" :rules="[v => !!v || 'User ID is Required']"></v-text-field>
+                <v-text-field v-model="pass" id="password" prepend-icon="mdi-lock" name="password" label="Password" type="password" :rules="[v => !!v || 'Password is Required']"></v-text-field>
 
             </v-card-text>
             <v-card-actions>
@@ -24,24 +24,52 @@
         </v-flex>
       </v-layout>
     </v-container>
+      <v-snackbar v-model="snackbar">
+        {{ snacktext }}
+        <template v-slot:action="{ attrs }">
+          <v-btn color="pink" text v-bind="attrs" @click="snackbar = false">Close</v-btn>
+        </template>
+      </v-snackbar>
     </v-parallax>
   </v-content>
 </template>
 
 <script>
+import axios from "axios";
 export default {
   name: "Login",
   data:function (){
     return {
-      isFormValid: true
+      userid: '',
+      pass:'',
+      isFormValid: true,
+      snacktext:'',
+      snackbar:false,
     }
   },
   methods:{
     submit(){
       console.log(this.isFormValid)
       this.$refs.form.validate()
+      let ref=this;
       if(this.isFormValid)
-        alert("Name: "+this.name+" Age: "+this.age);
+      {
+        axios.post('/auth/login', {
+              userid: this.userid,
+              pass: this.pass
+            }).then(function (response) {
+              if(response.data.auth)
+              {
+                ref.$store.commit("login/updateLogin",{id: response.data.id, userid: ref.userid, token: response.data.token, auth: response.data.auth});
+                ref.$router.push({name:'Booking'});
+              }
+              else
+              {
+                ref.snacktext=response.data.message
+                ref.snackbar=true
+              }
+        });
+      }
 
     },
   }
