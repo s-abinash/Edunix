@@ -1,13 +1,14 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-
 import e404 from '../components/e404';
-import BookingForm from "../views/BookingForm";
+import AdminHome from "../views/Admin/Home";
 import Home from "../views/Home";
-// import TrainSearch from "../views/TrainSearch";
-import Login from "../views/Login";
-import Explore from "../views/Explore";
-// import {store} from "../store/store.js";
+import Create from "@/components/Admin/Create";
+import AddContent from "@/components/Admin/AddContent";
+import Login from "@/views/Login";
+import Course from "@/components/User/Course";
+
+import {store} from "@/store/store";
 
 Vue.use(VueRouter)
 
@@ -18,19 +19,31 @@ const routes = [
         component: Home
     },
     {
-        path: '/explore',
-        name: 'Explore',
-        component: Explore
-    },
-    {
         path: '/login',
         name: 'Login',
         component: Login
     },
     {
-        path: '/booking',
-        name: 'Booking',
-        component: BookingForm
+        path: '/learn',
+        name: 'Learn',
+        component: Course,
+        props: true
+    },
+    {
+        path: '/admin',
+        name: 'Admin',
+        component: AdminHome
+    },
+    {
+        path: '/admin/create',
+        name: 'Create',
+        component: Create
+    },
+    {
+        path: '/admin/addcontent',
+        name: 'Add Content',
+        component: AddContent,
+        props: true
     },
     {
         path: '*',
@@ -40,14 +53,19 @@ const routes = [
 ]
 
 const router = new VueRouter({
-    base:'ticket-booking',
+    mode: 'history',
+    base:'edunix',
     routes
 })
 
-// router.beforeEach((to, from, next) => {
-//     console.log(store.getters['login/isAuthenticated']);
-//     if (to.name !== 'Login' && to.name !=='Home' && !store.getters['login/isAuthenticated']) next({ name: 'Login' })
-//     else next()
-// })
+router.beforeEach((to, from, next) => {
+    if (to.name === 'Learn' && !store.getters['login/isAuthenticated']){
+        next({ name: 'Login' })
+    }
+    else if ((to.name === 'Admin' || to.name === 'Create' || to.name === 'Add Content') && !store.getters['login/isAdmin']){
+        next({ name: 'Login' })
+    }
+    else next()
+})
 
 export default router

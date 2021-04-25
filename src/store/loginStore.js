@@ -2,8 +2,10 @@ const getDefaultState = () => {
     return {
         id:'',
         userid:'',
+        name: '',
         token:'',
-        auth: false
+        auth: false,
+        admin:false
     }
 }
 export default{
@@ -21,6 +23,9 @@ export default{
     getters: {
         isAuthenticated: state => {
             return state.auth
+        },
+        isAdmin: state => {
+            return state.auth && state.admin
         },
         token: state => {
             return state.token
