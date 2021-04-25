@@ -6,13 +6,15 @@ const jwt = require('jsonwebtoken');
 
 const verifyToken = (req,res,next)=>{
     // Get Auth header value
-    // console.log(req.headers)
-    const Header=req.headers['authorization']
+
+    const Header=req.headers['Authorization']
     // Check if undefined
     if(typeof Header!='undefined'){
         // Split at the space
-        req.token=Header.split(' ')[1];
+        let token=Header.split(' ')[1];
+        let decoded=jwt.verify(token, 'mysecretkey')
         // Call next Middleware
+        if(typeof decoded=="undefined") res.sendStatus(403)
         next();
     }
     else {

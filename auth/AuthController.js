@@ -14,10 +14,19 @@ app.post('/login',(req,res)=>{
     console.log(req.body)
     let pass=req.body.pass;
     let userid=req.body.userid;
-    let sql=[userid,pass]
-
-    con.query("SELECT * FROM `users` WHERE userid like ? && pass like ?",sql,(err, result)=> {
+    let creator=req.body.creator;
+    let sql=[userid,pass],sqlcontent
+    if(creator===false)
+    {
+         sqlcontent="SELECT * FROM `users` WHERE userid like ? && pass like ?";
+    }
+    else
+    {
+         sqlcontent="SELECT * FROM `admin` WHERE admin like ? && pass like ?";
+    }
+    con.query(sqlcontent,sql,(err, result)=> {
         let resdata={message:""}
+        console.log(result);
         if(err) resdata.message=err.sqlMessage;
         if((result.length)===0){
             res.json({
@@ -31,10 +40,37 @@ app.post('/login',(req,res)=>{
             res.json({
                 auth: true,
                 message: "Login Successful",
+                name: result[0].name,
+                id: result[0].id,
                 token: token
             });
         }
     });
+});
+app.post('/signup',(req,res)=>{
+    // Hashing
+    // let hashedPassword = bcrypt.hashSync(req.body.pass, 8);
+    console.log(req.body)
+    let pass=req.body.pass;
+    let userid=req.body.userid;
+    let name=req.body.name;
+    let email=req.body.email;
+    let phone=req.body.phone;
+
+    let sql={name:name,mail:email,phone:phone,userid:userid,pass:pass}
+
+    con.query("INSERT INTO `users` SET ?",sql,(err, result)=> {
+        let resdata={message:"",error:false,id:''}
+        if(err){
+            resdata.message=err.sqlMessage;
+            resdata.error=true;
+        }
+        else resdata.message="Signed Up Successfully";
+        res.set('Content-Type', 'json');
+        res.status(201);
+        res.end(JSON.stringify(resdata));
+    });
+
 });
 
 module.exports = app;
