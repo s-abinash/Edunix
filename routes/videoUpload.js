@@ -6,8 +6,8 @@ const AWS = require('aws-sdk');
 const formidable = require('formidable')
 
 const s3 = new AWS.S3({
-    accessKeyId: 'AKIATLMFAKROPEP3KLPG',
-    secretAccessKey: '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',
+    accessKeyId: '',
+    secretAccessKey: '',
 });
 
 // const verifyToken=require('../auth/verifiy')
