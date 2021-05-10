@@ -1,0 +1,24 @@
+service: serverless-edunix
+
+custom:
+  s3Sync:
+    - bucketName: edunix-coda
+      localDir: dist
+
+plugins:
+  - serverless-s3-sync
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+
+resources:
+  Resources:
+    StaticSite:
+      Type: AWS::S3::Bucket
+      Properties:
+        AccessControl: PublicRead
+        BucketName: edunix-coda
+        WebsiteConfiguration:
+          IndexDocument: index.html
+
